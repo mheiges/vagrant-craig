@@ -60,3 +60,21 @@ rm /home/vagrant/CRAIG/toxo_data/Hehl/hehl_day7.preproc/tgondii-rna.hehl.day7.ch
 ```
 craigPreprocess.py -v   --pre-config /home/vagrant/CRAIG/toxo_data/Hehl/hehl_day7.preconf   --out-dir /home/vagrant/CRAIG/toxo_data/Hehl/hehl_day7.preproc   --annot-fmt gtf --transcript-tag exon --cds-tag CDS tgondii   /home/vagrant/CRAIG/toxo_data/fromAxel/tgonME49.gtf   /home/vagrant/CRAIG/toxo_data/fromAxel/topLevelGenomicSeqs.fa   --gc-classes=100 --model ngscraig --config config
 ```
+
+
+## Gotchas
+
+If a helper-script fails it does not necessarily fail the whole craigPreprocess.py
+run, at least not until a downstream step hits the missing dependency. e.g.
+If regtools fails in the junctions2weightedLocs.py script, the craigPreprocess.py
+calling script does not notice. regtools exits with non-zero status; I don't know
+offhand how junctions2weightedLocs.py exits.
+
+CraiG leaves state files in place even if a step fails. The next time
+CraiG is run it skips the failed step, does not attempt to redo it and
+continues on through the pipeline, which fails on the next step that
+depends on the failed one. This is why I deleted the `.rnaseq_is_done`,
+`.junction.locs`, `.cov` files (and I focused on these files because the
+were related to the specific step(s) that I was having the most problem
+with at this writing. YMMV.). Deleting all the files in
+`hehl_day7.preproc` seems the best way ensure a fully clean run.
