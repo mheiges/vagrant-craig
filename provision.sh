@@ -44,6 +44,8 @@ echo "====== INSTALL SPARSEHASH ====="
 cd $WORKDIR
 if [[ -e sparsehash ]]; then
   pushd sparsehash
+  git reset -- .
+  git clean -f -x -d -- .
   git pull
   popd
 else
